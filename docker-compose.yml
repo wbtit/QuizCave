@@ -1,0 +1,29 @@
+version: '3'
+services:
+  app:
+    image: node:latest
+    working_dir: /app
+    ports:
+      - 8000:8000
+    deploy:
+      replicas: 3
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          cpus: '1'
+          memory: '2G'
+    environment:
+      - ENV_VAR1=value1
+      - ENV_VAR2=value2
+    command: npm start
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # Add any additional configuration for your Node.js app here
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - 80:80
+    # Add any additional configuration for Nginx here

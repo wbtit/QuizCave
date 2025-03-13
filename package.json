@@ -1,0 +1,47 @@
+{
+  "name": "quizcave",
+  "version": "1.0.0",
+  "description": "An application for conducting quizes and contest for whiteboard technologies organization",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anuragbhatt1805/wbt-quizcave.git"
+  },
+  "keywords": [
+    "quizcave",
+    "nodejs",
+    "mongodb",
+    "wbt",
+    "docker",
+    "javascript",
+    "mongoose"
+  ],
+  "author": "Anurag Bhatt",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/anuragbhatt1805/wbt-quizcave/issues"
+  },
+  "homepage": "https://github.com/anuragbhatt1805/wbt-quizcave#readme",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "http": "^0.0.1-security",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.4.0",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.13",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.1"
+  }
+}
