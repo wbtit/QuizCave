@@ -16,10 +16,15 @@ app.use(cookieParser());
 
 // Serve uploads from the public/uploads directory
 app.use('/uploads', express.static("/public/uploads"));
+app.get("/", (req, res) => {
+    res.status(200).json({
+      message: "You Summoned QuizCave Server",
+    });
+  });
 
 // Fix for __dirname in ES module context
 // const __dirname = path.dirname(new URL(import.meta.url).pathname);
-app.use(express.static('/public'));
+// app.use(express.static('/public'));
 
 // Routes for the app
 import { AdminUserRouter } from './routes/admin/user.routes.js';
@@ -36,7 +41,7 @@ app.use("/api/v1/admin/contest", AdminContestRouter);
 app.use("/api/v1/admin/result", AdminResultRouter);
 app.use("/api/v1/admin/question", AdminQuestionRouter);
 
-app.use("/api/v1/user", UserRouter);
+app.use("/aapi/v1/user", UserRouter);
 app.use("/api/v1/contest", ContestRouter);
 app.use("/api/v1/result", ResultRouter);
 
