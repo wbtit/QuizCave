@@ -41,7 +41,7 @@ app.use("/api/v1/admin/contest", AdminContestRouter);
 app.use("/api/v1/admin/result", AdminResultRouter);
 app.use("/api/v1/admin/question", AdminQuestionRouter);
 
-app.use("/aapi/v1/user", UserRouter);
+app.use("/api/v1/user", UserRouter);
 app.use("/api/v1/contest", ContestRouter);
 app.use("/api/v1/result", ResultRouter);
 
