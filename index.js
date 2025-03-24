@@ -7,7 +7,7 @@ import { app } from './src/app.js';
 
 const PORT = process.env.PORT || 5000;
 connectDB().then(() => {
-    app.listen(PORT, "127.0.0.1", () => {
+    app.listen(PORT, () => {
         console.log(`SERVER: Server is running on port ${PORT}`);
         console.log(`LINK: http://localhost:${PORT}`);
     });

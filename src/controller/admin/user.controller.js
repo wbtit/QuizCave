@@ -7,13 +7,13 @@ import path from "path";
 
 export const RegisterUser = AsyncHandler(async (req, res) => {
     try {
-        // if (!req.user){
-        //     throw new ApiError(401, "Unauthorized Access");
-        // }
+         if (!req.user){
+             throw new ApiError(401, "Unauthorized Access");
+        }
 
-        // if (req.user.role !== "admin") {
-        //     throw new ApiError(401, "Unauthorized Access");
-        // }
+         if (req.user.role !== "admin") {
+             throw new ApiError(401, "Unauthorized Access");
+         }
 
         const { name, email, phone, userId, password, designation } = req.body;
 
