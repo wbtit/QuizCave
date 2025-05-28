@@ -15,7 +15,8 @@ app.use(express.urlencoded({ extended: true, limit: "10000kb" }));
 app.use(cookieParser());
 
 // Serve uploads from the public/uploads directory
-app.use('/uploads', express.static("/public/uploads"));
+app.use('/uploads', express.static(path.join(process.cwd(), 'public/uploads')));
+
 app.get("/", (req, res) => {
     res.status(200).json({
       message: "You Summoned QuizCave Server",
