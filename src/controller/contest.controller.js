@@ -81,9 +81,9 @@ export const AttemptContest = AsyncHandler(async (req, res) => {
 
         const results = await Result.findOne({contestId: contest._id, userId: req.user._id});
 
-        if (results || contest.participants.includes(req.user._id)) {
-            throw new ApiError(400, "You Have Already Attempted This Contest");
-        }
+        // if (results || contest.participants.includes(req.user._id)) {
+        //     throw new ApiError(400, "You Have Already Attempted This Contest");
+        // }
 
         const newResult = await Result.create({
             contestId: contest._id,
