@@ -85,15 +85,18 @@ export const GetResultsForContest = AsyncHandler(async (req, res) => {
 
 export const DeclareResultForContest = AsyncHandler(async (req, res) => {
   try {
+    // Authorization
     if (!req.user) {
       throw new ApiError(401, "Unauthorized Access");
     }
-    if (!req.user.type === "admin") {
+
+    if (req.user.role !== "admin") {
+      console.log("USER:",req.user.type)
       throw new ApiError(403, "Access Forbidden");
     }
 
+    // Fetch Contest
     const contest = await Contest.findById(req.params.id);
-
     if (!contest) {
       throw new ApiError(404, "Contest Not Found");
     }
@@ -102,21 +105,22 @@ export const DeclareResultForContest = AsyncHandler(async (req, res) => {
       throw new ApiError(400, "Contest Not Active");
     }
 
-    if (contest.endDate > new Date().toLocaleString()) {
-      throw new ApiError(400, "Contest Not Ended");
+    if (new Date(contest.endDate) > new Date()) {
+      throw new ApiError(400, "Contest Not Ended Yet");
     }
 
+    // Fetch Undeclared Results
+    console.log("CONTENT ID:",contest._id);
+    
     const results = await Result.find({
       contestId: contest._id,
       declared: false,
     });
 
-    if (!results) {
+    if (!results || results.length === 0) {
+      console.log("RESULTS:",results);
+      
       throw new ApiError(404, "No Results Found");
-    }
-
-    if (results.declared) {
-      throw new ApiError(400, "Results Already Declared");
     }
 
     const markingSchema = {
@@ -127,44 +131,62 @@ export const DeclareResultForContest = AsyncHandler(async (req, res) => {
 
     for (const result of results) {
       let total = 0;
+
       for (const answer of result.answers) {
         const question = await Question.findById(answer.questionId);
+
+        if (!question) {
+          console.warn(`Skipping answer: Question not found (ID: ${answer.questionId})`);
+          continue;
+        }
+
+        const difficultyMark = markingSchema[question.difficult] || 0;
+
         if (question.type === "multiple") {
-          let res = true;
-          question.multipleAnswer.forEach((ans, index) => {
-            if (ans?.toLowerCase() !== answer.answer[index]?.toLowerCase()) {
-              res = false;
+          let isCorrect = true;
+
+          question.multipleAnswer.forEach((correctAns, index) => {
+            if (
+              correctAns?.toLowerCase() !==
+              (answer.answer?.[index]?.toLowerCase() || "")
+            ) {
+              isCorrect = false;
             }
           });
-          if (res) {
-            total += markingSchema[question.difficult];
+
+          if (isCorrect) {
+            total += difficultyMark;
           }
-          // else {
-          //     total -= markingSchema[question.difficult];
-          // }
+
         } else {
-          if (question.answer === answer.answer[0]) {
-            total += markingSchema[question.difficult];
+          if (
+            question.answer?.toLowerCase() ===
+            answer.answer?.[0]?.toLowerCase()
+          ) {
+            total += difficultyMark;
           }
-          // else {
-          //     totl -= markingSchema[question.difficult];
-          // }
         }
-        answer.marks = markingSchema[question.difficult];
+
+        // Store marks per answer (if needed for frontend/debug)
+        answer.marks = difficultyMark;
       }
+
       result.totalMarks = total;
       result.declared = true;
       await result.save();
     }
 
+    // Update contest status
     contest.declared = true;
     await contest.save();
 
     return res.json(new ApiResponse(200, {}, "Results Declared"));
   } catch (err) {
-    throw new ApiError(500, err.message);
+    console.error("Error declaring results:", err);
+    throw new ApiError(500, err.message || "Internal Server Error");
   }
 });
+
 
 export const SendResult = AsyncHandler(async (req, res) => {
   try {

@@ -22,7 +22,7 @@ export const CreateContest = AsyncHandler(async (req, res) => {
             throw new ApiError(400, "All fields are required");
         }
 
-        console.log(req.body)
+        //console.log(req.body)
 
         const newContest = await Contest.create({
             name: name.trim(),

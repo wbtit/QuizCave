@@ -17,7 +17,7 @@ export const createQuestion = AsyncHandler(async (req, res) => {
 
         const { set, difficult, question, type } = req.body;
 
-        console.log(req.body);
+        //console.log(req.body);
 
         if (!set || !difficult || !question || !type) {
             throw new ApiError(400, "All fields are required");

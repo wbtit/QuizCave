@@ -110,7 +110,7 @@ export const AttemptContest = AsyncHandler(async (req, res) => {
             }      
           ]);
 
-        console.log(questionsEasy)
+        //console.log(questionsEasy)
 
         const questionsMedium = await Question.aggregate([
             { $match: { difficult: "medium", set:set } },
