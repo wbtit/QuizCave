@@ -15,11 +15,11 @@ export const createQuestion = AsyncHandler(async (req, res) => {
             throw new ApiError(403, "Forbidden");
         }
 
-        const { set, difficult, question, type } = req.body;
+        const { set, difficult, question, type,contestId } = req.body;
 
         //console.log(req.body);
 
-        if (!set || !difficult || !question || !type) {
+        if (!set || !difficult || !question || !type || !contestId) {
             throw new ApiError(400, "All fields are required");
         }
 
@@ -29,6 +29,7 @@ export const createQuestion = AsyncHandler(async (req, res) => {
             difficult: difficult.trim().toLowerCase(),
             question: question.trim(),
             type: type.trim().toLowerCase(),
+            contestId: contestId.trim()
         };
 
         if (req?.body?.questionImage) {
@@ -195,7 +196,7 @@ export const updateQuestion = AsyncHandler(async (req, res) => {
             throw new ApiError(404, "Question not found");
         }
 
-        const { set, difficult, question } = req.body;
+        const { set, difficult, question} = req.body;
 
         if (!set || !difficult || !question) {
             throw new ApiError(400, "All fields are required");
@@ -207,13 +208,8 @@ export const updateQuestion = AsyncHandler(async (req, res) => {
             set: set.trim().toUpperCase(),
             difficult: difficult.trim().toLowerCase(),
             question: question.trim(),
-        };
-
-        if (questionImage.trim() !== "") {
-            data.questionImage = path.join("uploads", path.basename(req?.files?.questionImage[0]?.path));
         }
-
-        const updatedQuestion = await Question.findByIdAndUpdate(req.params.id, data, { new: true });
+        const updatedQuestion = await Question.findByIdAndUpdate(req.params.id, data, { new: true });       
 
         if (!updatedQuestion) {
             throw new ApiError(400, "Failed to update question");

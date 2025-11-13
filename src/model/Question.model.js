@@ -6,6 +6,11 @@ const QuestionSchema = new mongoose.Schema({
         required: true,
         enum: ['A', 'B', 'C', 'D', 'E']
     },
+    contestId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Contest',
+        required: true
+    },
     difficult: {
         type: String,
         required: true,
