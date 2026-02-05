@@ -50,4 +50,7 @@ const ResultSchema = new mongoose.Schema({
     }
 });
 
+// Ensure a user can only have one result per contest
+ResultSchema.index({ contestId: 1, userId: 1 }, { unique: true });
+
 export const Result = mongoose.model('Result', ResultSchema);

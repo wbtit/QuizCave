@@ -60,23 +60,29 @@ export const AddAnswerInResult = AsyncHandler(async (req, res) => {
         }
 
         const {question, answer} = req.body;
+        const questionId = typeof question === "object" && question !== null
+            ? question._id
+            : question;
 
-        const questionInfo = await Question.findOne({ _id: question })
+        const questionInfo = await Question.findOne({ _id: questionId })
 
         if (!questionInfo) {
             throw new ApiError(404, "Question not found");
         }
 
         const data = {
-            questionId: question,
+            questionId: questionId,
             answer: answer
         };
 
-        if (result.answers.find(a => a.questionId == question)) {
-            throw new ApiError(400, "Question Already Answered");
+        if (result.answers?.some(a => String(a.questionId) === String(questionId))) {
+            throw new ApiError(
+                400,
+                `Question already answered for this result. resultId=${result._id}, questionId=${questionId}, userId=${req.user?._id}, contestId=${result.contestId}`
+            );
         }
 
-        await result.answers.push(data);
+        result.answers.push(data);
         await result.save();
 
         return res.status(201).json(new ApiResponse(201, {}, "Answer Saved Successfully"));
