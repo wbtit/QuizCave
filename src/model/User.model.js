@@ -80,7 +80,7 @@ const UserSchema = new mongoose.Schema({
         type: String,
     },
     passingYear: {
-        type: Number,
+        type: String,
     },
     currAddress: {
         type: AddressSchema
@@ -99,7 +99,7 @@ const UserSchema = new mongoose.Schema({
         type: String,
     },
     currentSemester: {
-        type: Number,
+        type: String,
     },
     branch: {
         type: String,

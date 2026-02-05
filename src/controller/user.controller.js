@@ -24,17 +24,18 @@ export const RegisterStudent = AsyncHandler(async (req, res) => {
             throw new ApiError(400, "All fields are required");
         }
 
-        // Check file uploads
-        if (!req?.files?.profile || !req?.files?.resume || !req?.files?.marksheet) {
-            throw new ApiError(400, "Profile Picture, Resume and Marksheets are required");
-        }
-
-        // File paths
-        const profile = path.join('uploads', path.basename(req?.files?.profile[0]?.path));
-        const resume = path.join('uploads', path.basename(req?.files?.resume[0]?.path));
-        const marksheet = Array.from(req?.files?.marksheet).map(file =>
-            path.join('uploads', path.basename(file?.path))
-        );
+        // File paths (optional)
+        const profile = req?.files?.profile?.[0]?.path
+            ? path.join('uploads', path.basename(req?.files?.profile[0]?.path))
+            : "";
+        const resume = req?.files?.resume?.[0]?.path
+            ? path.join('uploads', path.basename(req?.files?.resume[0]?.path))
+            : "";
+        const marksheet = req?.files?.marksheet
+            ? Array.from(req?.files?.marksheet).map(file =>
+                path.join('uploads', path.basename(file?.path))
+            )
+            : [];
 
         // Check if user already exists
         const existingUser = await User.findOne({
@@ -62,10 +63,16 @@ export const RegisterStudent = AsyncHandler(async (req, res) => {
             }
         }
 
-        // Convert "Semester-4" → 4
-        const semesterNumber = parseInt(currentSemester.replace(/[^\d]/g, ''), 10);
-        if (isNaN(semesterNumber)) {
-            throw new ApiError(400, "Invalid semester format");
+        // Convert "Semester-4" → "4" or accept "passout"
+        let semesterValue = "";
+        if (typeof currentSemester === "string" && currentSemester.trim().toLowerCase() === "passout") {
+            semesterValue = "passout";
+        } else {
+            const semesterNumber = parseInt(currentSemester.replace(/[^\d]/g, ''), 10);
+            if (isNaN(semesterNumber)) {
+                throw new ApiError(400, "Invalid semester format");
+            }
+            semesterValue = String(semesterNumber);
         }
 
         // Create new user
@@ -76,7 +83,7 @@ export const RegisterStudent = AsyncHandler(async (req, res) => {
             password: password.trim(),
             userId: `WBT-${studentId.trim()}`,
             role: "student",
-            passingYear: Number(passingYear.trim()),
+            passingYear: passingYear.trim(),
             altPhone: altPhone ? altPhone.trim() : "",
             profilePic: profile.trim(),
             marksheet: marksheet,
@@ -101,7 +108,7 @@ export const RegisterStudent = AsyncHandler(async (req, res) => {
             gender: gender.trim(),
             fatherName: fatherName.trim(),
             motherName: motherName.trim(),
-            currentSemester: semesterNumber,
+            currentSemester: semesterValue,
             branch: branch.trim(),
             course: course.trim(),
             college: college.trim(),
@@ -205,4 +212,3 @@ export const GetUser = AsyncHandler(async (req, res) => {
         throw new ApiError(400, error.message);
     }
 });
-
